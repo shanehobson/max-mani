@@ -17,7 +17,7 @@ const ZAERA_BASE = import.meta.env.DEV
   : "https://api.zaera.io";
 
 export const ZAERA = {
-  bookingIframeUrl: "https://TBD-zaera-booking-url",
+  bookingIframeUrl: "https://booking.zaera.io/demo",
   servicesApiUrl: `${ZAERA_BASE}/public/services`,
   categoriesApiUrl: `${ZAERA_BASE}/public/service-categories`,
   tenantId: "ad67c4b4-26a5-4899-94f9-596c7b3dcd84",
