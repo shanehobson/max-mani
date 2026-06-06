@@ -1,0 +1,53 @@
+---
+import { ZAERA } from "~/lib/config";
+---
+
+<dialog
+  id="booking-modal"
+  class="p-0 bg-transparent backdrop:bg-ink/60 w-full max-w-[1100px] md:rounded-md"
+>
+  <div class="relative bg-cream-50 w-full h-[100dvh] md:h-auto md:aspect-[4/3] overflow-hidden">
+    <button
+      type="button"
+      data-booking-close
+      aria-label="Close booking"
+      class="absolute top-3 right-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-ink/80 text-cream-50 hover:bg-ink"
+    >
+      ✕
+    </button>
+    <iframe
+      id="booking-iframe"
+      title="Book an appointment"
+      class="w-full h-full border-0"
+      loading="lazy"
+      allow="payment; clipboard-write"
+    ></iframe>
+  </div>
+</dialog>
+
+<script define:vars={{ bookingUrl: ZAERA.bookingIframeUrl }}>
+  const dialog = document.getElementById("booking-modal");
+  const iframe = document.getElementById("booking-iframe");
+  if (dialog instanceof HTMLDialogElement && iframe instanceof HTMLIFrameElement) {
+    let loaded = false;
+    const open = () => {
+      if (!loaded) {
+        iframe.src = bookingUrl;
+        loaded = true;
+      }
+      dialog.showModal();
+    };
+    document.querySelectorAll("[data-book-now]").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        open();
+      });
+    });
+    dialog.querySelector("[data-booking-close]")?.addEventListener("click", () =>
+      dialog.close(),
+    );
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  }
+</script>

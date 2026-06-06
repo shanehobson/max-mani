@@ -1,0 +1,81 @@
+---
+import { NAV_LINKS, SITE } from "~/lib/config";
+---
+
+<header
+  id="site-header"
+  class="sticky top-0 z-40 bg-transparent border-b border-black transition-[backdrop-filter] duration-200"
+>
+  <div class="mx-auto max-w-site px-6 h-16 flex items-center justify-between">
+    <a href="#top" class="font-display leading-none" aria-label={SITE.name}>
+      <span class="block text-xl tracking-[0.18em]">M<span class="text-brown">⨯</span>X</span>
+      <span class="block text-[0.6rem] tracking-[0.35em] text-ink-muted">MANICURE</span>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-8">
+      {
+        NAV_LINKS.map((link) => (
+          <a href={link.href} class="nav-link">
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <button type="button" class="btn-outline hidden md:inline-flex text-nav" data-book-now>
+        Book Now
+      </button>
+      <button
+        type="button"
+        class="md:hidden p-2"
+        aria-label="Toggle menu"
+        data-mobile-toggle
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <nav
+    id="mobile-nav"
+    class="md:hidden hidden border-t border-black bg-transparent"
+  >
+    <ul class="px-6 py-4 flex flex-col gap-3">
+      {
+        NAV_LINKS.map((link) => (
+          <li>
+            <a href={link.href} class="nav-link block py-1">
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <button type="button" class="btn-outline w-full" data-book-now>
+          Book Now
+        </button>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>("[data-mobile-toggle]");
+  const menu = document.getElementById("mobile-nav");
+  if (toggle && menu) {
+    toggle.addEventListener("click", () => menu.classList.toggle("hidden"));
+    menu.querySelectorAll<HTMLAnchorElement>("a").forEach((a) =>
+      a.addEventListener("click", () => menu.classList.add("hidden")),
+    );
+  }
+
+  const header = document.getElementById("site-header");
+  if (header) {
+    const update = () => header.classList.toggle("backdrop-blur-xl", window.scrollY > 4);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+  }
+</script>

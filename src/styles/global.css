@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-body text-ink antialiased;
+    background-image: var(--page-bg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  @media (max-width: 768px) {
+    body {
+      background-attachment: scroll;
+      background-size: auto;
+      background-repeat: repeat;
+    }
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+
+  section[id] {
+    scroll-margin-top: 5rem;
+  }
+}
+
+@layer components {
+  /* Main page "Book Now" — brown background, offwhite text */
+  .btn-primary {
+    @apply inline-flex items-center justify-center bg-brown text-offwhite px-6 py-3 font-display tracking-wide hover:bg-brown-dark transition-colors;
+  }
+
+  /* Navbar "Book Now" — black text, brown border, body font matches nav links */
+  .btn-outline {
+    @apply inline-flex items-center justify-center border border-brown text-black px-5 py-2 font-body hover:bg-brown hover:text-offwhite transition-colors;
+  }
+
+  /* Service section tabs — transparent bg, brown text, offwhite border, drop shadow */
+  .btn-tab {
+    @apply inline-flex items-center justify-center bg-transparent border border-offwhite text-brown px-5 py-2 font-body shadow-md hover:shadow-lg transition-shadow;
+  }
+
+  .btn-tab[aria-pressed="true"] {
+    @apply bg-brown text-offwhite border-brown;
+  }
+
+  /* Navbar links — Manrope, black */
+  .nav-link {
+    @apply font-body text-nav text-black hover:text-brown transition-colors;
+  }
+
+  .section-shell {
+    @apply mx-auto w-full max-w-site px-6 py-16 md:py-24;
+  }
+
+  /* Section heading — DM Serif Display 48 desktop, offwhite */
+  .section-title {
+    @apply text-center font-display text-4xl md:text-section-title tracking-wide text-offwhite;
+  }
+
+  /* Larger section heading — DM Serif Display 64 desktop (e.g. "My Work") */
+  .section-title-xl {
+    @apply font-display text-[2.75rem] md:text-section-title-xl tracking-wide text-offwhite;
+  }
+
+  .form-input {
+    @apply block w-full bg-transparent border border-ink/30 px-3 py-2 text-sm focus:outline-none focus:border-brown placeholder:text-offwhite placeholder:uppercase placeholder:tracking-wider;
+  }
+}

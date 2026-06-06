@@ -1,0 +1,119 @@
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  fetchServicesAndCategories,
+  formatPrice,
+  type ApiCategory,
+} from "~/lib/services";
+
+export default function ServicesList() {
+  const [categories, setCategories] = useState<ApiCategory[] | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetchServicesAndCategories()
+      .then(({ categories }) => {
+        if (cancelled) return;
+        setCategories(categories);
+        setActiveId(categories[0]?.categoryId ?? null);
+      })
+      .catch((e: unknown) => {
+        if (cancelled) return;
+        setError(e instanceof Error ? e.message : "Failed to load services");
+      })
+      .finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const activeCategory = useMemo(
+    () => categories?.find((c) => c.categoryId === activeId) ?? null,
+    [categories, activeId],
+  );
+
+  return (
+    <div>
+      {categories && categories.length > 0 && (
+        <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-10">
+          {categories.map((c) => (
+            <TabButton
+              key={c.categoryId}
+              active={c.categoryId === activeId}
+              onClick={() => setActiveId(c.categoryId)}
+            >
+              {c.name}
+            </TabButton>
+          ))}
+        </div>
+      )}
+
+      {loading && (
+        <ul className="space-y-6" aria-busy="true">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <li key={i} className="h-12 bg-ink/5 animate-pulse rounded-sm" />
+          ))}
+        </ul>
+      )}
+
+      {!loading && error && (
+        <p className="text-sm text-ink-muted mb-4">
+          Services are temporarily unavailable: {error}
+        </p>
+      )}
+
+      {!loading && activeCategory && (
+        <ul className="divide-y divide-ink/10">
+          {activeCategory.services.map((s) => (
+            <li
+              key={s.serviceId}
+              className="grid grid-cols-[1fr_auto] gap-x-6 py-5 items-start"
+            >
+              <div>
+                <p className="font-body font-medium text-xl md:text-service-title">
+                  {s.name}
+                </p>
+                <p className="font-body text-base md:text-service-desc text-ink-muted mt-1">
+                  {s.durationMinutes} min
+                </p>
+              </div>
+              <p className="font-body font-medium text-xl md:text-service-title whitespace-nowrap">
+                {formatPrice(s.priceCents)}
+              </p>
+            </li>
+          ))}
+          {activeCategory.services.length === 0 && (
+            <li className="py-6 text-sm text-ink-muted">
+              No services in this category yet.
+            </li>
+          )}
+        </ul>
+      )}
+
+    </div>
+  );
+}
+
+function TabButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="btn-tab"
+      aria-pressed={active}
+    >
+      {children}
+    </button>
+  );
+}

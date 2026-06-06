@@ -1,0 +1,28 @@
+---
+import ContactForm from "~/components/islands/ContactForm.tsx";
+---
+
+<section id="top" class="section-shell grid md:grid-cols-[11fr_9fr] gap-12 md:gap-16 items-center pt-10 md:pt-20">
+  <div class="md:self-start md:pt-24">
+    <h1 class="font-display text-4xl md:text-hero-title leading-tight uppercase">
+      <span class="block text-brown">The nail art you desire</span>
+      <span class="block text-offwhite">the perfection you get</span>
+    </h1>
+    <p class="mt-8 max-w-prose font-body text-lg md:text-hero-body leading-relaxed">
+      Hi there! I'm Ksenia and I'll be glad to see you!<br />
+      If you want to get in touch and figure out which service is best for you,
+      just fill out the form and I'll reach out to you!<br />
+      But if you know what you want, book the appointment and I'll see you soon!
+    </p>
+  </div>
+
+  <div class="flex flex-col items-stretch gap-8">
+    <ContactForm client:idle kind="contact" />
+    <div class="flex flex-col items-center gap-4">
+      <span class="text-ink-muted text-sm tracking-widest">OR</span>
+      <button type="button" class="btn-primary" data-book-now>
+        Book Now
+      </button>
+    </div>
+  </div>
+</section>
