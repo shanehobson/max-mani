@@ -4,9 +4,9 @@ import { ZAERA } from "~/lib/config";
 
 <dialog
   id="booking-modal"
-  class="p-0 bg-transparent backdrop:bg-ink/60 w-full max-w-[1100px] md:rounded-md"
+  class="p-0 m-0 bg-transparent backdrop:bg-ink/60 w-screen h-[100dvh] max-w-none max-h-none md:w-full md:h-auto md:max-w-[1100px] md:max-h-[calc(100vh-2rem)] md:m-auto md:rounded-md"
 >
-  <div class="relative bg-cream-50 w-full h-[100dvh] md:h-auto md:aspect-[4/3] overflow-hidden">
+  <div class="relative bg-cream-50 w-full h-full md:h-auto md:aspect-[4/3] overflow-hidden">
     <button
       type="button"
       data-booking-close
@@ -30,11 +30,18 @@ import { ZAERA } from "~/lib/config";
   const iframe = document.getElementById("booking-iframe");
   if (dialog instanceof HTMLDialogElement && iframe instanceof HTMLIFrameElement) {
     let loaded = false;
+    const lockScroll = () => {
+      document.documentElement.style.overflow = "hidden";
+    };
+    const unlockScroll = () => {
+      document.documentElement.style.overflow = "";
+    };
     const open = () => {
       if (!loaded) {
         iframe.src = bookingUrl;
         loaded = true;
       }
+      lockScroll();
       dialog.showModal();
     };
     document.querySelectorAll("[data-book-now]").forEach((el) => {
@@ -49,5 +56,6 @@ import { ZAERA } from "~/lib/config";
     dialog.addEventListener("click", (e) => {
       if (e.target === dialog) dialog.close();
     });
+    dialog.addEventListener("close", unlockScroll);
   }
 </script>
