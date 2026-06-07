@@ -1,4 +1,5 @@
 ---
+import Logo from "~/components/Logo.astro";
 import { NAV_LINKS, SITE } from "~/lib/config";
 ---
 
@@ -7,9 +8,9 @@ import { NAV_LINKS, SITE } from "~/lib/config";
   class="sticky top-0 z-40 bg-transparent border-b border-black transition-[backdrop-filter] duration-200"
 >
   <div class="mx-auto max-w-site px-6 h-16 flex items-center justify-between">
-    <a href="#top" class="font-display leading-none" aria-label={SITE.name}>
-      <span class="block text-xl tracking-[0.18em]">M<span class="text-brown">⨯</span>X</span>
-      <span class="block text-[0.6rem] tracking-[0.35em] text-ink-muted">MANICURE</span>
+    <a href="#top" class="font-display leading-none flex flex-col items-start" aria-label={SITE.name}>
+      <Logo heightClass="h-5" />
+      <span class="block text-[0.6rem] tracking-[0.35em] text-ink-muted mt-1">MANICURE</span>
     </a>
 
     <nav class="hidden md:flex items-center gap-8">

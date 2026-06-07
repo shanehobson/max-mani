@@ -1,0 +1,29 @@
+---
+import { Image } from "astro:assets";
+import mxLogo from "~/assets/logo/mx.png";
+import aLogo from "~/assets/logo/a.png";
+
+interface Props {
+  /** Tailwind height utility for the M X mark (e.g. "h-5", "h-8"). */
+  heightClass?: string;
+  /** Tailwind height utility for the inner A glyph (e.g. "h-3"). */
+  aHeightClass?: string;
+  /** Extra classes for the outer wrapper. */
+  class?: string;
+}
+
+const {
+  heightClass = "h-5",
+  aHeightClass = "h-[85%]",
+  class: className = "",
+} = Astro.props;
+---
+
+<span class={`relative inline-block ${heightClass} ${className}`}>
+  <Image src={mxLogo} alt="" class={`${heightClass} w-auto`} />
+  <Image
+    src={aLogo}
+    alt=""
+    class={`absolute left-[58%] top-1/2 -translate-x-[calc(50%+2px)] -translate-y-[calc(50%-1px)] ${aHeightClass} w-auto`}
+  />
+</span>
