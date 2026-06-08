@@ -29,17 +29,23 @@ import { ZAERA } from "~/lib/config";
   const dialog = document.getElementById("booking-modal");
   const iframe = document.getElementById("booking-iframe");
   if (dialog instanceof HTMLDialogElement && iframe instanceof HTMLIFrameElement) {
-    let loaded = false;
+    let currentSrc = "";
     const lockScroll = () => {
       document.documentElement.style.overflow = "hidden";
     };
     const unlockScroll = () => {
       document.documentElement.style.overflow = "";
     };
-    const open = () => {
-      if (!loaded) {
-        iframe.src = bookingUrl;
-        loaded = true;
+    const buildUrl = (service) => {
+      const url = new URL(bookingUrl, window.location.origin);
+      if (service) url.searchParams.set("service", service);
+      return url.toString();
+    };
+    const open = (service) => {
+      const nextSrc = buildUrl(service);
+      if (nextSrc !== currentSrc) {
+        iframe.src = nextSrc;
+        currentSrc = nextSrc;
       }
       lockScroll();
       dialog.showModal();
@@ -47,8 +53,13 @@ import { ZAERA } from "~/lib/config";
     document.querySelectorAll("[data-book-now]").forEach((el) => {
       el.addEventListener("click", (e) => {
         e.preventDefault();
-        open();
+        const service = el instanceof HTMLElement ? el.dataset.service : undefined;
+        open(service);
       });
+    });
+    document.addEventListener("book:open", (e) => {
+      const detail = e instanceof CustomEvent ? e.detail : null;
+      open(detail?.service);
     });
     dialog.querySelector("[data-booking-close]")?.addEventListener("click", () =>
       dialog.close(),

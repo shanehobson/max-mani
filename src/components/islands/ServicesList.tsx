@@ -68,21 +68,30 @@ export default function ServicesList() {
       {!loading && activeCategory && (
         <ul className="divide-y divide-ink/10">
           {activeCategory.services.map((s) => (
-            <li
-              key={s.serviceId}
-              className="grid grid-cols-[1fr_auto] gap-x-6 py-5 items-start"
-            >
-              <div>
-                <p className="font-body font-medium text-xl md:text-service-title">
-                  {s.name}
+            <li key={s.serviceId}>
+              <button
+                type="button"
+                onClick={() =>
+                  document.dispatchEvent(
+                    new CustomEvent("book:open", {
+                      detail: { service: s.serviceId },
+                    }),
+                  )
+                }
+                className="w-full grid grid-cols-[1fr_auto] gap-x-6 py-5 items-start text-left hover:bg-ink/[0.03] focus-visible:bg-ink/[0.03] focus-visible:outline-none transition-colors cursor-pointer"
+              >
+                <div>
+                  <p className="font-body font-medium text-xl md:text-service-title">
+                    {s.name}
+                  </p>
+                  <p className="font-body text-base md:text-service-desc text-ink-muted mt-1">
+                    {s.durationMinutes} min
+                  </p>
+                </div>
+                <p className="font-body font-medium text-xl md:text-service-title whitespace-nowrap">
+                  {formatPrice(s.priceCents)}
                 </p>
-                <p className="font-body text-base md:text-service-desc text-ink-muted mt-1">
-                  {s.durationMinutes} min
-                </p>
-              </div>
-              <p className="font-body font-medium text-xl md:text-service-title whitespace-nowrap">
-                {formatPrice(s.priceCents)}
-              </p>
+              </button>
             </li>
           ))}
           {activeCategory.services.length === 0 && (
