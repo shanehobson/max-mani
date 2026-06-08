@@ -36,6 +36,15 @@ export default function ContactForm({ kind = "contact" }: Props) {
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [toast, setToast] = useState<string | null>(null);
 
+  const emptyValues = {
+    kind,
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+    website: "",
+  } as Values;
+
   const {
     register,
     handleSubmit,
@@ -43,7 +52,7 @@ export default function ContactForm({ kind = "contact" }: Props) {
     formState: { errors },
   } = useForm<Values>({
     resolver: zodResolver(schema),
-    defaultValues: { kind } as Values,
+    defaultValues: emptyValues,
   });
 
   useEffect(() => {
@@ -62,7 +71,7 @@ export default function ContactForm({ kind = "contact" }: Props) {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setStatus("idle");
-      reset({ kind } as Values);
+      reset(emptyValues);
       setToast(
         kind === "contact"
           ? "Thank you! I'll be in touch shortly."
