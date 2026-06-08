@@ -7,14 +7,10 @@ export const SITE = {
   instagramUrl: "https://instagram.com/max.manicure_naples",
 } as const;
 
-// TODO: fill in with real values from user
 // TODO: replace hardcoded tenantId with the real Max Mani tenant id once provisioned
-// In dev we go through Vite's `/api/zaera` proxy (see astro.config.mjs) to avoid
-// browser CORS errors against api.zaera.io. In production CORS must be enabled
-// on api.zaera.io for https://maxmani.com.
-const ZAERA_BASE = import.meta.env.DEV
-  ? "/api/zaera"
-  : "https://api.zaera.io";
+// Dev: Vite proxies /api/zaera → api.zaera.io (see astro.config.mjs).
+// Prod: CloudFront proxies /api/zaera/* → api.zaera.io (see infra/lib/site-stack.ts).
+const ZAERA_BASE = "/api/zaera";
 
 export const ZAERA = {
   bookingIframeUrl: "https://booking.zaera.io/demo",
@@ -23,8 +19,8 @@ export const ZAERA = {
   tenantId: "ad67c4b4-26a5-4899-94f9-596c7b3dcd84",
 } as const;
 
-// TODO: fill in with real Lambda function URL
-export const LAMBDA_SUBMIT_URL = "https://TBD-lambda-function-url";
+export const LAMBDA_SUBMIT_URL =
+  "https://l2vegtv6gtdcld2vfydmshheru0cxfek.lambda-url.us-east-1.on.aws/";
 
 export const NAV_LINKS = [
   { href: "#services", label: "Services" },

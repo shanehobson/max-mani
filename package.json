@@ -8,7 +8,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "pnpm build && cd infra && pnpm cdk deploy --profile maxmani --require-approval never"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.0",

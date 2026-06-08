@@ -3,8 +3,7 @@ import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 
-// TODO: replace with the real production domain once it's locked in.
-const SITE_URL = "https://maxmani.com";
+const SITE_URL = "https://maxmanicure.com";
 
 export default defineConfig({
   site: SITE_URL,

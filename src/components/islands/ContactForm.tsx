@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,6 +12,7 @@ const contactSchema = z.object({
   email: z.string().email("Enter a valid email"),
   phone: z.string().min(7, "Enter a valid phone number"),
   message: z.string().min(1, "Message is required"),
+  website: z.string().optional(),
 });
 
 const testimonialSchema = z.object({
@@ -19,6 +20,7 @@ const testimonialSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Enter a valid email"),
   message: z.string().min(1, "Feedback is required"),
+  website: z.string().optional(),
 });
 
 type ContactValues = z.infer<typeof contactSchema>;
@@ -31,18 +33,24 @@ interface Props {
 
 export default function ContactForm({ kind = "contact" }: Props) {
   const schema = kind === "contact" ? contactSchema : testimonialSchema;
-  const [status, setStatus] = useState<"idle" | "submitting" | "ok" | "error">(
-    "idle",
-  );
+  const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
+  const [toast, setToast] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<Values>({
     resolver: zodResolver(schema),
     defaultValues: { kind } as Values,
   });
+
+  useEffect(() => {
+    if (!toast) return;
+    const id = setTimeout(() => setToast(null), 5000);
+    return () => clearTimeout(id);
+  }, [toast]);
 
   const onSubmit = async (values: Values) => {
     setStatus("submitting");
@@ -53,24 +61,17 @@ export default function ContactForm({ kind = "contact" }: Props) {
         body: JSON.stringify(values),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setStatus("ok");
+      setStatus("idle");
+      reset({ kind } as Values);
+      setToast(
+        kind === "contact"
+          ? "Thank you! I'll be in touch shortly."
+          : "Thank you! Your feedback means a lot.",
+      );
     } catch {
       setStatus("error");
     }
   };
-
-  if (status === "ok") {
-    return (
-      <div className="p-6 bg-white/10 backdrop-blur-xl shadow-xl text-center">
-        <p className="font-display text-2xl">Thank you!</p>
-        <p className="mt-2 text-ink-muted text-sm">
-          {kind === "contact"
-            ? "I'll be in touch shortly."
-            : "Your feedback means a lot."}
-        </p>
-      </div>
-    );
-  }
 
   const title = kind === "contact" ? "Get In Touch" : "Leave Feedback";
   const submitLabel = kind === "contact" ? "Send message" : "Send feedback";
@@ -81,9 +82,40 @@ export default function ContactForm({ kind = "contact" }: Props) {
       className="p-6 md:p-8 bg-white/10 backdrop-blur-xl shadow-xl space-y-4"
       noValidate
     >
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-ink text-cream-50 px-5 py-3 shadow-xl font-display text-sm md:text-base max-w-[90vw] text-center"
+        >
+          {toast}
+        </div>
+      )}
+
       <h3 className="font-display text-2xl md:text-3xl mb-2">{title}</h3>
 
       <input type="hidden" value={kind} {...register("kind" as const)} />
+
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-10000px",
+          width: "1px",
+          height: "1px",
+          overflow: "hidden",
+        }}
+      >
+        <label>
+          Website
+          <input
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            {...register("website")}
+          />
+        </label>
+      </div>
 
       <Field label="Your name" error={errors.name?.message}>
         <input

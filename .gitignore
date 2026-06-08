@@ -21,3 +21,7 @@ yarn-error.log*
 
 # internal planning
 PLAN.md
+DEPLOY_PLAN.md
+
+# local AI notes
+CLAUDE.local.md

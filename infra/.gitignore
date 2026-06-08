@@ -1,0 +1,9 @@
+node_modules
+cdk.out
+*.js
+!jest.config.js
+*.d.ts
+.cdk.staging
+
+# local-only config (account ID, hosted zone, emails)
+config.local.ts
