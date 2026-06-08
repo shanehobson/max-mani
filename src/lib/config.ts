@@ -7,16 +7,15 @@ export const SITE = {
   instagramUrl: "https://instagram.com/max.manicure_naples",
 } as const;
 
-// TODO: replace hardcoded tenantId with the real Max Mani tenant id once provisioned
 // Dev: Vite proxies /api/zaera → api.zaera.io (see astro.config.mjs).
 // Prod: CloudFront proxies /api/zaera/* → api.zaera.io (see infra/lib/site-stack.ts).
 const ZAERA_BASE = "/api/zaera";
 
 export const ZAERA = {
-  bookingIframeUrl: "https://booking.zaera.io/demo",
+  bookingIframeUrl: "https://booking.zaera.io/maxmanicure",
   servicesApiUrl: `${ZAERA_BASE}/public/services`,
   categoriesApiUrl: `${ZAERA_BASE}/public/service-categories`,
-  tenantId: "ad67c4b4-26a5-4899-94f9-596c7b3dcd84",
+  tenantId: "da1251e5-d0bc-4a6f-af4d-c45c637e6cd1",
 } as const;
 
 export const LAMBDA_SUBMIT_URL =
