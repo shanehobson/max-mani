@@ -17,6 +17,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ses from "aws-cdk-lib/aws-ses";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as path from "path";
 
 export interface SiteStackProps extends StackProps {
@@ -200,6 +201,13 @@ function handler(event) {
       prune: true,
     });
 
+    const rateLimitTable = new dynamodb.Table(this, "ContactRateLimitTable", {
+      partitionKey: { name: "pk", type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      timeToLiveAttribute: "ttl",
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
     const contactFn = new NodejsFunction(this, "ContactFunction", {
       entry: path.join(__dirname, "..", "lambda", "contact", "handler.ts"),
       handler: "handler",
@@ -209,14 +217,20 @@ function handler(event) {
       environment: {
         TO_EMAIL: toEmail,
         FROM_EMAIL: fromEmail,
+        RATE_LIMIT_TABLE: rateLimitTable.tableName,
       },
       bundling: {
         minify: true,
         sourceMap: false,
         target: "node20",
-        externalModules: ["@aws-sdk/client-sesv2"],
+        externalModules: [
+          "@aws-sdk/client-sesv2",
+          "@aws-sdk/client-dynamodb",
+        ],
       },
     });
+
+    rateLimitTable.grantReadWriteData(contactFn);
 
     contactFn.addToRolePolicy(
       new iam.PolicyStatement({
