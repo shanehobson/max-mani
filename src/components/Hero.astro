@@ -1,5 +1,10 @@
 ---
 import ContactForm from "~/components/islands/ContactForm.tsx";
+
+const intro =
+  "Hi there! I’m Ksenia and I’ll be glad to see you! " +
+  "If you wanna get in touch and figure out what service is best for you, just fill the form and I’ll reach out to you! " +
+  "But if you know what you want, book the appointment and I’ll see you soon!";
 ---
 
 <section id="top" class="section-shell grid md:grid-cols-[11fr_9fr] gap-12 md:gap-16 items-center pt-10 md:pt-20">
@@ -8,10 +13,8 @@ import ContactForm from "~/components/islands/ContactForm.tsx";
       <span class="block text-brown">The nail art you desire</span>
       <span class="block text-offwhite">the perfection you get</span>
     </h1>
-    <p class="mt-8 max-w-prose mx-auto md:mx-0 font-body text-lg md:text-hero-body leading-snug">
-      Hi, I’m Ksenia, and I’d love to welcome you to the studio.
-      Whether you’re looking for the perfect service or already know exactly what you’d like, I’m here to help.
-      Fill out the contact form and I’ll personally reach out to guide you, or go ahead and book your appointment — I can’t wait to see you soon!
+    <p class="hidden md:block mt-8 max-w-prose md:mx-0 text-ink-muted text-base font-body normal-case leading-snug">
+      {intro}
     </p>
   </div>
 
@@ -23,5 +26,8 @@ import ContactForm from "~/components/islands/ContactForm.tsx";
         Book Now
       </button>
     </div>
+    <p class="md:hidden max-w-prose mx-auto text-center text-ink-muted text-base font-body normal-case leading-snug">
+      {intro}
+    </p>
   </div>
 </section>

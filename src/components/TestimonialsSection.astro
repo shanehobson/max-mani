@@ -1,5 +1,6 @@
 ---
 import ContactForm from "~/components/islands/ContactForm.tsx";
+import TestimonialsCarousel from "~/components/islands/TestimonialsCarousel.tsx";
 
 // TODO: replace with real testimonials once the user provides them.
 const testimonials = [
@@ -21,20 +22,11 @@ const testimonials = [
 <section id="testimonials" class="section-shell">
   <h2 class="section-title uppercase text-brown">Testimonials</h2>
 
-  <ul class="mt-12 grid md:grid-cols-3 gap-6">
-    {
-      testimonials.map((t) => (
-        <li class="bg-cream-50/70 border border-ink/10 p-6 backdrop-blur-sm">
-          <p class="text-ink leading-relaxed">"{t.text}"</p>
-          <p class="mt-4 text-sm tracking-widest uppercase text-ink-muted">
-            — {t.name}
-          </p>
-        </li>
-      ))
-    }
-  </ul>
+  <div class="mt-12">
+    <TestimonialsCarousel client:idle testimonials={testimonials} />
+  </div>
 
-  <div id="leave-feedback" class="mt-12 max-w-xl mx-auto">
+  <div id="leave-feedback" class="mt-32 max-w-xl mx-auto">
     <ContactForm client:idle kind="testimonial" />
   </div>
 </section>
