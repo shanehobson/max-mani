@@ -1,10 +1,24 @@
 ---
 import ServicesList from "~/components/islands/ServicesList.tsx";
+import {
+  fetchServicesAndCategoriesServer,
+  type ServicesData,
+} from "~/lib/services";
+
+let initial: ServicesData | null = null;
+try {
+  initial = await fetchServicesAndCategoriesServer();
+} catch (err) {
+  console.warn(
+    "[seo] Zaera unreachable at build; services will hydrate at runtime:",
+    err instanceof Error ? err.message : err,
+  );
+}
 ---
 
 <section id="services" class="section-shell !pt-0">
   <h2 class="section-title uppercase">Services</h2>
   <div class="mt-12">
-    <ServicesList client:visible />
+    <ServicesList client:visible initial={initial} />
   </div>
 </section>

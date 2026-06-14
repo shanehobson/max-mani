@@ -25,9 +25,9 @@ export default {
         },
       },
       fontFamily: {
-        // Figma-locked typefaces
+        // Figma-locked typefaces. Self-hosted via @fontsource(-variable).
         display: ['"DM Serif Display"', "Georgia", "serif"],
-        body: ["Manrope", "system-ui", "sans-serif"],
+        body: ['"Manrope Variable"', "Manrope", "system-ui", "sans-serif"],
       },
       fontSize: {
         // Figma desktop type scale. Pair with responsive modifiers

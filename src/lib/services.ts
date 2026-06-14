@@ -1,4 +1,4 @@
-import { ZAERA } from "./config";
+import { ZAERA, ZAERA_API_BASE_ABSOLUTE } from "./config";
 
 export interface ApiCategoryRef {
   categoryId: string;
@@ -42,6 +42,14 @@ export async function fetchServicesAndCategories(): Promise<ServicesData> {
   const [categories, services] = await Promise.all([
     fetchJson<ApiCategory[]>(ZAERA.categoriesApiUrl),
     fetchJson<ApiService[]>(ZAERA.servicesApiUrl),
+  ]);
+  return { categories, services };
+}
+
+export async function fetchServicesAndCategoriesServer(): Promise<ServicesData> {
+  const [categories, services] = await Promise.all([
+    fetchJson<ApiCategory[]>(`${ZAERA_API_BASE_ABSOLUTE}/public/service-categories`),
+    fetchJson<ApiService[]>(`${ZAERA_API_BASE_ABSOLUTE}/public/services`),
   ]);
   return { categories, services };
 }

@@ -1,9 +1,21 @@
 ---
+import "@fontsource-variable/manrope/index.css";
+import "@fontsource/dm-serif-display/index.css";
 import "~/styles/global.css";
 import Header from "~/components/Header.astro";
 import Footer from "~/components/Footer.astro";
 import BookingModal from "~/components/BookingModal.astro";
-import { SITE } from "~/lib/config";
+import { SITE, SITE_URL } from "~/lib/config";
+import {
+  EMIT_REVIEW_SCHEMA,
+  TESTIMONIALS,
+} from "~/data/testimonials";
+import {
+  buildBeautySalonJsonLd,
+  buildAggregateRatingJsonLd,
+  buildReviewListJsonLd,
+  buildCanonicalUrl,
+} from "~/lib/seo";
 import pageBg from "~/assets/background/page-background.jpeg";
 
 interface Props {
@@ -13,8 +25,15 @@ interface Props {
 
 const {
   title = `${SITE.name} — Nail art studio in Naples, FL`,
-  description = "Hard gel manicure, pedicure, and nail art by Ksenia. Naples, FL.",
+  description = "Hard gel manicure, pedicure, and custom nail art in Naples, FL. Private studio by licensed nail technician Ksenia. Book online today.",
 } = Astro.props;
+
+const canonical = buildCanonicalUrl(SITE_URL, Astro.url.pathname);
+const ogImage = `${SITE_URL}/og-image.jpg`;
+
+const beautySalonLd = buildBeautySalonJsonLd(SITE_URL);
+const aggregateRatingLd = buildAggregateRatingJsonLd(TESTIMONIALS);
+const reviewListLd = buildReviewListJsonLd(TESTIMONIALS);
 ---
 
 <!doctype html>
@@ -23,14 +42,40 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#6a3c3c" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&display=swap"
-    />
+    {/* TODO: replace with a 180x180 PNG once one is available. */}
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    {/* Open Graph */}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="en_US" />
+
+    {/* Twitter / X */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="preload" as="image" href={pageBg.src} />
+
     <title>{title}</title>
+
+    <script type="application/ld+json" set:html={JSON.stringify(beautySalonLd)} />
+    {EMIT_REVIEW_SCHEMA && aggregateRatingLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(aggregateRatingLd)} />
+    )}
+    {EMIT_REVIEW_SCHEMA && reviewListLd.map((r) => (
+      <script type="application/ld+json" set:html={JSON.stringify(r)} />
+    ))}
   </head>
   <body style={`--page-bg: url(${pageBg.src});`}>
     <Header />

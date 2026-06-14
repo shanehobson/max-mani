@@ -3,16 +3,35 @@ import { Image } from "astro:assets";
 import ksenia from "~/assets/about/ksenia.png";
 import MyWorkCarousel from "~/components/islands/MyWorkCarousel.tsx";
 
+// Alt text aligned to alphabetical filename order. If gallery files are
+// renamed or reordered, re-align these strings to match.
+const GALLERY_ALTS: Record<string, string> = {
+  "IMG_1575 1": "Soft pink hard-gel manicure with glossy finish",
+  "IMG_1576 1": "Classic French gel manicure with thin white tip",
+  "IMG_1577 1": "Pearlescent nude nails with subtle shimmer",
+  "IMG_2129 1": "Minimalist nude nails with single accent line",
+  "IMG_3971 1": "Glossy almond-shaped natural pink manicure",
+  "IMG_3972 1": "Sheer cream nails with delicate floral nail art",
+};
+
 const galleryModules = import.meta.glob(
   "../assets/gallery/*.{jpg,jpeg,png,JPG,JPEG,PNG}",
   { eager: true, query: "?url", import: "default" },
 ) as Record<string, string>;
+
 const slides = Object.entries(galleryModules)
   .sort(([a], [b]) => a.localeCompare(b))
-  .map(([, url]) => url);
+  .map(([path, url]) => {
+    const base = path.replace(/^.*\//, "").replace(/\.[^.]+$/, "");
+    return {
+      src: url,
+      alt: GALLERY_ALTS[base] ?? "Nail art by Max Mani",
+    };
+  });
 ---
 
 <section id="about" class="section-shell !pt-0">
+  <h2 class="sr-only">About Max Mani</h2>
   <div class="grid md:grid-cols-[1.25fr_1fr] gap-10 md:gap-16 items-start">
     <div class="order-1">
       <Image
@@ -23,16 +42,15 @@ const slides = Object.entries(galleryModules)
         sizes="(min-width: 768px) 256px, 60vw"
       />
       <div class="-mt-[15px] max-w-prose mx-auto md:mx-0">
-        <h3 class="font-display text-3xl leading-none mb-3">
+        <h3 class="font-display text-3xl leading-none mb-3 inline">
           <span class="inline-block bg-white/10 backdrop-blur-md px-3 py-1.5 font-semibold uppercase tracking-wide text-offwhite">I'm Ksenia</span>
-          <span class="relative top-[6px] text-ink-muted text-base font-body normal-case leading-snug"
-            > — a licensed nail technician from Ukraine with 9 years of experience
-            specializing in clean, elegant hard gel manicure and pedicure. For the past 3 years, I've been working in the USA. I truly love helping
+        </h3>
+        <span class="relative top-[6px] text-ink-muted text-base font-body normal-case leading-snug"
+          > — a licensed nail technician from Ukraine with 9 years of experience
+          specializing in clean, elegant hard gel manicure and pedicure. For the past 3 years, I've been working in the USA. I truly love helping
           women feel confident and cared for through beautiful, long-lasting nails
           and a relaxing private studio experience where every detail matters.
-          </span>
-        </h3>
-     
+        </span>
       </div>
     </div>
 

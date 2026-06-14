@@ -1,3 +1,5 @@
+export const SITE_URL = "https://maxmanicure.com";
+
 export const SITE = {
   name: "Max Mani",
   phone: "+12393063205",
@@ -11,11 +13,38 @@ export const SITE = {
 // Prod: CloudFront proxies /api/zaera/* → api.zaera.io (see infra/lib/site-stack.ts).
 const ZAERA_BASE = "/api/zaera";
 
+// Build-time / SSR cannot use the relative proxy — call Zaera directly.
+export const ZAERA_API_BASE_ABSOLUTE = "https://api.zaera.io";
+
 export const ZAERA = {
   bookingIframeUrl: "https://booking.zaera.io/maxmanicure",
   servicesApiUrl: `${ZAERA_BASE}/public/services`,
   categoriesApiUrl: `${ZAERA_BASE}/public/service-categories`,
   tenantId: "da1251e5-d0bc-4a6f-af4d-c45c637e6cd1",
+} as const;
+
+// Owner must populate `openingHoursSpecification` with real hours before
+// the JSON-LD field will be emitted. Until then the footer shows
+// "By appointment" and the JSON-LD omits the field.
+export const BUSINESS = {
+  legalName: "Max Mani",
+  description:
+    "Private nail studio in Naples, FL offering hard gel manicure, pedicure, and custom nail art by licensed nail technician Ksenia.",
+  image: `${SITE_URL}/og-image.jpg`,
+  priceRange: "$$",
+  areaServed: "Naples, FL",
+  sameAs: [SITE.instagramUrl],
+  openingHoursSpecification: [
+    {
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "09:00",
+      closes: "17:00",
+    },
+  ] as Array<{
+    dayOfWeek: string | string[];
+    opens: string;
+    closes: string;
+  }>,
 } as const;
 
 export const LAMBDA_SUBMIT_URL =

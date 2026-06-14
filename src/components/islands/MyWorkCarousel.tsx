@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 
+interface Slide {
+  src: string;
+  alt: string;
+}
+
 interface Props {
-  slides: string[];
+  slides: Slide[];
 }
 
 const INTERVAL_MS = 5000;
@@ -19,11 +24,11 @@ export default function MyWorkCarousel({ slides }: Props) {
 
   return (
     <div className="relative aspect-[3/4] overflow-hidden bg-cream-100 shadow-md translate-y-[60px]">
-      {slides.map((src, i) => (
+      {slides.map((s, i) => (
         <img
-          key={src}
-          src={src}
-          alt=""
+          key={s.src}
+          src={s.src}
+          alt={s.alt}
           loading={i === 0 ? "eager" : "lazy"}
           className={
             "absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-in-out " +

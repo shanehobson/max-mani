@@ -1,29 +1,14 @@
 ---
 import ContactForm from "~/components/islands/ContactForm.tsx";
 import TestimonialsCarousel from "~/components/islands/TestimonialsCarousel.tsx";
-
-// TODO: replace with real testimonials once the user provides them.
-const testimonials = [
-  {
-    name: "Anna",
-    text: "Best manicure I've ever had — Ksenia is incredibly precise.",
-  },
-  {
-    name: "Maria",
-    text: "Studio feels relaxing and private. Nails lasted 4 weeks.",
-  },
-  {
-    name: "Elena",
-    text: "Beautiful designs, gentle care, and always on time.",
-  },
-];
+import { TESTIMONIALS } from "~/data/testimonials";
 ---
 
 <section id="testimonials" class="section-shell">
   <h2 class="section-title uppercase text-brown">Testimonials</h2>
 
   <div class="mt-12">
-    <TestimonialsCarousel client:idle testimonials={testimonials} />
+    <TestimonialsCarousel client:idle testimonials={TESTIMONIALS} />
   </div>
 
   <div id="leave-feedback" class="mt-32 max-w-xl mx-auto">

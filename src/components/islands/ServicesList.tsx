@@ -3,32 +3,47 @@ import {
   fetchServicesAndCategories,
   formatPrice,
   type ApiCategory,
+  type ServicesData,
 } from "~/lib/services";
 
-export default function ServicesList() {
-  const [categories, setCategories] = useState<ApiCategory[] | null>(null);
-  const [activeId, setActiveId] = useState<string | null>(null);
+interface Props {
+  initial?: ServicesData | null;
+}
+
+export default function ServicesList({ initial }: Props) {
+  const [categories, setCategories] = useState<ApiCategory[] | null>(
+    initial?.categories ?? null,
+  );
+  const [activeId, setActiveId] = useState<string | null>(
+    initial?.categories[0]?.categoryId ?? null,
+  );
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initial);
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
     fetchServicesAndCategories()
-      .then(({ categories }) => {
+      .then(({ categories: fresh }) => {
         if (cancelled) return;
-        setCategories(categories);
-        setActiveId(categories[0]?.categoryId ?? null);
+        setCategories(fresh);
+        setActiveId((prev) => {
+          const stillExists = prev && fresh.find((c) => c.categoryId === prev);
+          return stillExists ? prev : (fresh[0]?.categoryId ?? null);
+        });
       })
       .catch((e: unknown) => {
         if (cancelled) return;
+        // If we already have prerendered data, keep showing it and stay quiet.
+        if (initial) return;
         setError(e instanceof Error ? e.message : "Failed to load services");
       })
-      .finally(() => !cancelled && setLoading(false));
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [initial]);
 
   const activeCategory = useMemo(
     () => categories?.find((c) => c.categoryId === activeId) ?? null,
@@ -51,7 +66,7 @@ export default function ServicesList() {
         </div>
       )}
 
-      {loading && (
+      {loading && !categories && (
         <ul className="space-y-6" aria-busy="true">
           {Array.from({ length: 4 }).map((_, i) => (
             <li key={i} className="h-12 bg-ink/5 animate-pulse rounded-sm" />
@@ -59,13 +74,13 @@ export default function ServicesList() {
         </ul>
       )}
 
-      {!loading && error && (
+      {!loading && !categories && error && (
         <p className="text-sm text-ink-muted mb-4">
           Services are temporarily unavailable: {error}
         </p>
       )}
 
-      {!loading && activeCategory && (
+      {activeCategory && (
         <ul className="divide-y divide-ink/10">
           {activeCategory.services.map((s) => (
             <li key={s.serviceId}>
