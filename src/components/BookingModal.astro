@@ -4,21 +4,21 @@ import { ZAERA } from "~/lib/config";
 
 <dialog
   id="booking-modal"
-  class="p-0 m-0 bg-transparent backdrop:bg-ink/60 w-screen h-[100dvh] max-w-none max-h-none md:w-full md:max-w-[800px] md:h-[min(900px,calc(100vh-2rem))] md:m-auto md:rounded-md"
+  class="p-0 m-0 bg-transparent backdrop:bg-ink/60 w-screen h-screen h-[100dvh] max-w-none max-h-none overflow-hidden md:w-full md:max-w-[800px] md:h-[min(900px,calc(100vh-2rem))] md:m-auto md:rounded-md"
 >
-  <div class="relative bg-cream-50 w-full h-full overflow-hidden">
+  <div class="relative bg-cream-50 w-full h-full overflow-y-auto overscroll-contain">
     <button
       type="button"
       data-booking-close
       aria-label="Close booking"
-      class="absolute top-3 right-[27px] z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-ink/80 text-cream-50 hover:bg-ink"
+      class="fixed top-3 right-3 md:absolute md:right-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-ink/80 text-cream-50 hover:bg-ink"
     >
       ✕
     </button>
     <iframe
       id="booking-iframe"
       title="Book an appointment"
-      class="w-full h-full border-0"
+      class="block w-full h-full min-h-full border-0"
       loading="lazy"
       allow="payment; clipboard-write"
     ></iframe>
@@ -30,11 +30,24 @@ import { ZAERA } from "~/lib/config";
   const iframe = document.getElementById("booking-iframe");
   if (dialog instanceof HTMLDialogElement && iframe instanceof HTMLIFrameElement) {
     let currentSrc = "";
+    let lockedScrollY = 0;
     const lockScroll = () => {
+      lockedScrollY = window.scrollY;
       document.documentElement.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${lockedScrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
     };
     const unlockScroll = () => {
       document.documentElement.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      window.scrollTo(0, lockedScrollY);
     };
     const buildUrl = (service) => {
       const url = new URL(bookingUrl, window.location.origin);
