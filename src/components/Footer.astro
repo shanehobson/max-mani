@@ -1,49 +1,5 @@
 ---
-import { SITE, BUSINESS } from "~/lib/config";
-
-const DAY_ABBR: Record<string, string> = {
-  Sunday: "Sun",
-  Monday: "Mon",
-  Tuesday: "Tue",
-  Wednesday: "Wed",
-  Thursday: "Thu",
-  Friday: "Fri",
-  Saturday: "Sat",
-};
-const DAY_ORDER = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-function formatDayList(days: string | string[]): string {
-  const list = Array.isArray(days) ? days : [days];
-  if (list.length === 0) return "";
-  const sorted = [...list].sort(
-    (a, b) => DAY_ORDER.indexOf(a) - DAY_ORDER.indexOf(b),
-  );
-  const indices = sorted.map((d) => DAY_ORDER.indexOf(d));
-  const contiguous = indices.every((v, i) => i === 0 || v === indices[i - 1] + 1);
-  if (contiguous && sorted.length >= 3) {
-    return `${DAY_ABBR[sorted[0]]}–${DAY_ABBR[sorted[sorted.length - 1]]}`;
-  }
-  return sorted.map((d) => DAY_ABBR[d] ?? d).join(", ");
-}
-
-function formatTime(t: string): string {
-  const [hStr, mStr] = t.split(":");
-  const h = Number(hStr);
-  const m = Number(mStr);
-  const period = h >= 12 ? "PM" : "AM";
-  const hour12 = h % 12 === 0 ? 12 : h % 12;
-  return m === 0 ? `${hour12} ${period}` : `${hour12}:${mStr} ${period}`;
-}
-
-const hoursText =
-  BUSINESS.openingHoursSpecification.length === 0
-    ? "By appointment"
-    : BUSINESS.openingHoursSpecification
-        .map(
-          (h) =>
-            `${formatDayList(h.dayOfWeek)} ${formatTime(h.opens)}–${formatTime(h.closes)}`,
-        )
-        .join(" · ");
+import { SITE } from "~/lib/config";
 ---
 
 <footer class="border-t border-ink/10 mt-10">
@@ -64,10 +20,6 @@ const hoursText =
         @{SITE.instagram}
       </a>
     </div>
-
-    <p class="text-ink-muted text-xs uppercase tracking-widest">
-      Hours: {hoursText}
-    </p>
 
     <button type="button" class="btn-outline text-sm" data-book-now>
       Book Now
