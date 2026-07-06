@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 
 interface Testimonial {
   name: string;
@@ -10,6 +11,8 @@ interface Props {
 }
 
 const INTERVAL_MS = 5000;
+const SLIDE_MS = 700;
+const FADE_MS = 120;
 
 export default function TestimonialsCarousel({ testimonials }: Props) {
   const [index, setIndex] = useState(0);
@@ -33,14 +36,22 @@ export default function TestimonialsCarousel({ testimonials }: Props) {
           const isActive = i === index;
           const isLeaving = i === prevIndex && prevIndex !== index;
           let position = "translate-x-full opacity-0";
-          if (isActive) position = "translate-x-0 opacity-100";
-          else if (isLeaving) position = "-translate-x-full opacity-0";
+          let transition = "none";
+          if (isActive) {
+            position = "translate-x-0 opacity-100";
+            transition = `transform ${SLIDE_MS}ms ease-in-out, opacity ${FADE_MS}ms ease-in-out`;
+          } else if (isLeaving) {
+            position = "-translate-x-full opacity-0";
+            transition = `transform ${SLIDE_MS}ms ease-in-out, opacity ${FADE_MS}ms ease-in-out ${SLIDE_MS - FADE_MS}ms`;
+          }
+          const style: CSSProperties = { transition };
           return (
             <div
               key={t.name}
               aria-hidden={!isActive}
+              style={style}
               className={
-                "bg-white/10 backdrop-blur-xl p-8 shadow-[0_0_100px_#f5f5f5] transition-all duration-700 ease-in-out " +
+                "bg-white/10 backdrop-blur-xl p-8 shadow-[0_0_100px_#f5f5f5] " +
                 (isActive
                   ? "relative pointer-events-auto "
                   : "absolute inset-0 pointer-events-none ") +
