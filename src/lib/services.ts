@@ -4,7 +4,7 @@ export interface ApiCategoryRef {
   categoryId: string;
   tenantId: string;
   name: string;
-  description: string;
+  description: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -14,6 +14,7 @@ export interface ApiService {
   tenantId: string;
   categoryId: string;
   name: string;
+  description: string | null;
   durationMinutes: number;
   priceCents: number;
   createdAt: string;

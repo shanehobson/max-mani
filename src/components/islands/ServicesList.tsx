@@ -102,6 +102,11 @@ export default function ServicesList({ initial }: Props) {
                   <p className="font-body text-base md:text-service-desc text-ink-muted mt-1">
                     {s.durationMinutes} min
                   </p>
+                  {s.description && (
+                    <p className="font-body text-sm md:text-base text-ink-muted mt-2 max-w-prose whitespace-pre-line">
+                      {s.description}
+                    </p>
+                  )}
                 </div>
                 <p className="font-body font-medium text-xl md:text-service-title whitespace-nowrap">
                   {formatPrice(s.priceCents)}
