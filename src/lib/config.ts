@@ -20,6 +20,9 @@ export const ADDRESS = {
   region: ADDRESS_REGION,
   postalCode: POSTAL_CODE,
   country: "US",
+  // Geocoded from the street address via OpenStreetMap (house-level match).
+  latitude: 26.203457,
+  longitude: -81.800369,
   display: `${STREET_ADDRESS}, ${ADDRESS_LOCALITY}, ${ADDRESS_REGION} ${POSTAL_CODE}`,
   mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     `Max Mani, ${STREET_ADDRESS}, ${ADDRESS_LOCALITY}, ${ADDRESS_REGION} ${POSTAL_CODE}`,

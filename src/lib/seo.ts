@@ -27,6 +27,11 @@ export function buildBeautySalonJsonLd(
       postalCode: ADDRESS.postalCode,
       addressCountry: ADDRESS.country,
     },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: ADDRESS.latitude,
+      longitude: ADDRESS.longitude,
+    },
     hasMap: ADDRESS.mapsUrl,
     image: BUSINESS.image,
     priceRange: BUSINESS.priceRange,
