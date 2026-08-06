@@ -1,5 +1,5 @@
 ---
-import { SITE } from "~/lib/config";
+import { SITE, ADDRESS } from "~/lib/config";
 ---
 
 <footer class="border-t border-ink/10 mt-10">
@@ -20,6 +20,14 @@ import { SITE } from "~/lib/config";
         @{SITE.instagram}
       </a>
     </div>
+
+    <a href={ADDRESS.mapsUrl} target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 hover:text-brown">
+      <svg aria-hidden="true" class="h-5 w-5 text-brown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+        <circle cx="12" cy="10" r="3" />
+      </svg>
+      <address class="not-italic">{ADDRESS.display}</address>
+    </a>
 
     <button type="button" class="btn-outline text-sm" data-book-now>
       Book Now

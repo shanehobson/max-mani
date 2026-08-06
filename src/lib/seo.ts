@@ -1,4 +1,4 @@
-import { SITE, BUSINESS } from "./config";
+import { SITE, BUSINESS, ADDRESS } from "./config";
 import type { Testimonial } from "~/data/testimonials";
 
 export function buildCanonicalUrl(siteUrl: string, pathname: string): string {
@@ -19,6 +19,15 @@ export function buildBeautySalonJsonLd(
     url: siteUrl,
     telephone: SITE.phone,
     email: SITE.email,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: ADDRESS.street,
+      addressLocality: ADDRESS.locality,
+      addressRegion: ADDRESS.region,
+      postalCode: ADDRESS.postalCode,
+      addressCountry: ADDRESS.country,
+    },
+    hasMap: ADDRESS.mapsUrl,
     image: BUSINESS.image,
     priceRange: BUSINESS.priceRange,
     areaServed: BUSINESS.areaServed,
