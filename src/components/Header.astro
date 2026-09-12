@@ -66,6 +66,7 @@ import { NAV_LINKS, SITE } from "~/lib/config";
   const menu = document.getElementById("mobile-nav");
   if (toggle && menu) {
     const setOpen = (open: boolean) => {
+      if (open) menu.style.transition = "";
       menu.classList.toggle("grid-rows-[1fr]", open);
       menu.classList.toggle("grid-rows-[0fr]", !open);
       menu.setAttribute("aria-hidden", String(!open));
@@ -75,8 +76,18 @@ import { NAV_LINKS, SITE } from "~/lib/config";
     toggle.addEventListener("click", () =>
       setOpen(menu.classList.contains("grid-rows-[0fr]")),
     );
+    // The header is sticky and in normal flow, so the open menu adds its
+    // height to the page. If the menu animates closed while the browser
+    // jumps to the anchor, the collapse shifts the content up and buries
+    // the section's top under the header (Safari has no scroll anchoring
+    // to compensate). Collapse instantly so the header is already back to
+    // its bar height when the anchor's scroll position is computed.
     menu.querySelectorAll<HTMLAnchorElement>("a").forEach((a) =>
-      a.addEventListener("click", () => setOpen(false)),
+      a.addEventListener("click", () => {
+        menu.style.transition = "none"; // restored by the next setOpen(true)
+        setOpen(false);
+        void menu.offsetHeight; // flush layout before the default anchor jump
+      }),
     );
   }
 
