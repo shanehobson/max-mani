@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
   fetchCatalog,
-  formatAddress,
+  formatDuration,
   formatPrice,
   locationKey,
   type LocationCatalog,
@@ -119,7 +119,7 @@ export default function ServicesList({ initial }: Props) {
                     {s.name}
                   </p>
                   <p className="font-body text-base md:text-service-desc text-ink-muted mt-1">
-                    {s.durationMinutes} min
+                    {formatDuration(s.durationMinutes)}
                   </p>
                   {s.description && (
                     <p className="font-body text-sm md:text-base text-ink-muted mt-2 max-w-prose whitespace-pre-line">
@@ -141,19 +141,12 @@ export default function ServicesList({ initial }: Props) {
 
 function LocationNote({ location }: { location: LocationCatalog }) {
   const address = location.address;
-  if (!address) return null;
-  if (address.kind === "in_home") {
-    const fee = address.surchargeCents;
-    return (
-      <p className="font-body text-sm text-ink-muted text-center md:text-left">
-        I come to you anywhere in the Naples area.
-        {fee ? ` A ${formatPrice(fee)} travel fee is added per visit.` : ""}
-      </p>
-    );
-  }
+  if (!address || address.kind !== "in_home") return null;
+  const fee = address.surchargeCents;
   return (
     <p className="font-body text-sm text-ink-muted text-center md:text-left">
-      {formatAddress(address)}
+      I come to you anywhere in the Naples area.
+      {fee ? ` A ${formatPrice(fee)} travel fee is added per visit.` : ""}
     </p>
   );
 }

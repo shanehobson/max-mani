@@ -131,3 +131,14 @@ export function formatAddress(a: ApiAddress): string {
 export function formatPrice(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
+
+export function formatDuration(minutes: number): string {
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  const parts: string[] = [];
+  if (hours > 0) parts.push(`${hours} ${hours === 1 ? "hour" : "hours"}`);
+  if (rest > 0 || hours === 0) {
+    parts.push(`${rest} ${rest === 1 ? "minute" : "minutes"}`);
+  }
+  return parts.join(" ");
+}
