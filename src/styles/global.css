@@ -56,6 +56,15 @@
     @apply bg-brown text-offwhite border-brown;
   }
 
+  /* Location picker — understated pill toggle, sits above the service tabs */
+  .btn-location {
+    @apply inline-flex items-center justify-center rounded-full border border-brown/40 text-brown px-4 py-1.5 text-sm font-body hover:border-brown transition-colors;
+  }
+
+  .btn-location[aria-pressed="true"] {
+    @apply bg-brown text-offwhite border-brown;
+  }
+
   /* Navbar links — Manrope, black */
   .nav-link {
     @apply font-body text-nav text-black hover:text-brown transition-colors;

@@ -16,6 +16,7 @@ export interface ApiService {
   name: string;
   description: string | null;
   durationMinutes: number;
+  /** Resolved for the location the service was fetched for. */
   priceCents: number;
   createdAt: string;
   updatedAt: string;
@@ -26,9 +27,30 @@ export interface ApiCategory extends ApiCategoryRef {
   services: ApiService[];
 }
 
-export interface ServicesData {
+export type AddressKind = "physical" | "in_home";
+
+export interface ApiAddress {
+  addressId: string;
+  label: string;
+  kind: AddressKind;
+  /** Travel fee added per in-home visit; null when there is none. */
+  surchargeCents: number | null;
+  street: string;
+  suite: string | null;
+  city: string;
+  state: string;
+  zip: string;
+  isPrimary: boolean;
+}
+
+export interface LocationCatalog {
+  /** null when the tenant has no active locations. */
+  address: ApiAddress | null;
   categories: ApiCategory[];
-  services: ApiService[];
+}
+
+export interface ServicesData {
+  locations: LocationCatalog[];
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -39,20 +61,71 @@ async function fetchJson<T>(url: string): Promise<T> {
   return (await r.json()) as T;
 }
 
-export async function fetchServicesAndCategories(): Promise<ServicesData> {
-  const [categories, services] = await Promise.all([
-    fetchJson<ApiCategory[]>(ZAERA.categoriesApiUrl),
-    fetchJson<ApiService[]>(ZAERA.servicesApiUrl),
-  ]);
-  return { categories, services };
+function locationRank(a: ApiAddress): number {
+  if (a.isPrimary) return 0;
+  return a.kind === "physical" ? 1 : 2;
 }
 
-export async function fetchServicesAndCategoriesServer(): Promise<ServicesData> {
-  const [categories, services] = await Promise.all([
-    fetchJson<ApiCategory[]>(`${ZAERA_API_BASE_ABSOLUTE}/public/service-categories`),
-    fetchJson<ApiService[]>(`${ZAERA_API_BASE_ABSOLUTE}/public/services`),
+function sortLocations(addresses: ApiAddress[]): ApiAddress[] {
+  return [...addresses].sort((a, b) => locationRank(a) - locationRank(b));
+}
+
+function groupByCategory(
+  categories: ApiCategory[],
+  services: ApiService[],
+): ApiCategory[] {
+  return categories
+    .map((c) => ({
+      ...c,
+      services: services.filter((s) => s.categoryId === c.categoryId),
+    }))
+    .filter((c) => c.services.length > 0);
+}
+
+async function fetchCatalogFrom(apiBase: string): Promise<ServicesData> {
+  const [addresses, categories] = await Promise.all([
+    fetchJson<ApiAddress[]>(`${apiBase}/public/addresses`),
+    fetchJson<ApiCategory[]>(`${apiBase}/public/service-categories`),
   ]);
-  return { categories, services };
+
+  const ordered = sortLocations(addresses);
+  if (ordered.length === 0) {
+    return {
+      locations: [
+        {
+          address: null,
+          categories: categories.filter((c) => c.services.length > 0),
+        },
+      ],
+    };
+  }
+
+  const locations = await Promise.all(
+    ordered.map(async (address) => {
+      const services = await fetchJson<ApiService[]>(
+        `${apiBase}/public/services?addressId=${encodeURIComponent(address.addressId)}`,
+      );
+      return { address, categories: groupByCategory(categories, services) };
+    }),
+  );
+  return { locations };
+}
+
+export function fetchCatalog(): Promise<ServicesData> {
+  return fetchCatalogFrom(ZAERA.apiBase);
+}
+
+export function fetchCatalogServer(): Promise<ServicesData> {
+  return fetchCatalogFrom(ZAERA_API_BASE_ABSOLUTE);
+}
+
+export function locationKey(location: LocationCatalog): string {
+  return location.address?.addressId ?? "default";
+}
+
+export function formatAddress(a: ApiAddress): string {
+  const street = a.suite ? `${a.street}, ${a.suite}` : a.street;
+  return `${street}, ${a.city}, ${a.state} ${a.zip}`;
 }
 
 export function formatPrice(cents: number): string {

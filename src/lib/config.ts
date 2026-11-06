@@ -9,10 +9,10 @@ export const SITE = {
   instagramUrl: "https://instagram.com/max.manicure_naples",
 } as const;
 
-const STREET_ADDRESS = "4962 Tamiami Trail N";
+const STREET_ADDRESS = "4174 Pegasus Way";
 const ADDRESS_LOCALITY = "Naples";
 const ADDRESS_REGION = "FL";
-const POSTAL_CODE = "34103";
+const POSTAL_CODE = "34120";
 
 export const ADDRESS = {
   street: STREET_ADDRESS,
@@ -20,9 +20,9 @@ export const ADDRESS = {
   region: ADDRESS_REGION,
   postalCode: POSTAL_CODE,
   country: "US",
-  // Geocoded from the street address via OpenStreetMap (house-level match).
-  latitude: 26.203457,
-  longitude: -81.800369,
+  // Geocoded from the street address via OpenStreetMap (street-level match).
+  latitude: 26.295859,
+  longitude: -81.528878,
   display: `${STREET_ADDRESS}, ${ADDRESS_LOCALITY}, ${ADDRESS_REGION} ${POSTAL_CODE}`,
   mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     `Max Mani, ${STREET_ADDRESS}, ${ADDRESS_LOCALITY}, ${ADDRESS_REGION} ${POSTAL_CODE}`,
@@ -38,8 +38,7 @@ export const ZAERA_API_BASE_ABSOLUTE = "https://api.zaera.io";
 
 export const ZAERA = {
   bookingIframeUrl: "https://booking.zaera.io/maxmanicure",
-  servicesApiUrl: `${ZAERA_BASE}/public/services`,
-  categoriesApiUrl: `${ZAERA_BASE}/public/service-categories`,
+  apiBase: ZAERA_BASE,
   tenantId: "da1251e5-d0bc-4a6f-af4d-c45c637e6cd1",
 } as const;
 
@@ -49,7 +48,7 @@ export const ZAERA = {
 export const BUSINESS = {
   legalName: "Max Mani",
   description:
-    `Private nail studio at ${ADDRESS.display} offering hard gel manicure, pedicure, and custom nail art by licensed nail technician Ksenia.`,
+    `Private nail studio at ${ADDRESS.display} offering hard gel manicure, pedicure, and custom nail art by licensed nail technician Ksenia. In-home appointments are also available.`,
   image: `${SITE_URL}/og-image.jpg`,
   priceRange: "$$",
   areaServed: "Naples, FL",

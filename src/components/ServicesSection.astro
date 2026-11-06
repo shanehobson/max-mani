@@ -1,13 +1,13 @@
 ---
 import ServicesList from "~/components/islands/ServicesList.tsx";
 import {
-  fetchServicesAndCategoriesServer,
+  fetchCatalogServer,
   type ServicesData,
 } from "~/lib/services";
 
 let initial: ServicesData | null = null;
 try {
-  initial = await fetchServicesAndCategoriesServer();
+  initial = await fetchCatalogServer();
 } catch (err) {
   console.warn(
     "[seo] Zaera unreachable at build; services will hydrate at runtime:",

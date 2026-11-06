@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
-  fetchServicesAndCategories,
+  fetchCatalog,
+  formatAddress,
   formatPrice,
-  type ApiCategory,
+  locationKey,
+  type LocationCatalog,
   type ServicesData,
 } from "~/lib/services";
 
@@ -11,25 +13,17 @@ interface Props {
 }
 
 export default function ServicesList({ initial }: Props) {
-  const [categories, setCategories] = useState<ApiCategory[] | null>(
-    initial?.categories ?? null,
-  );
-  const [activeId, setActiveId] = useState<string | null>(
-    initial?.categories[0]?.categoryId ?? null,
-  );
+  const [data, setData] = useState<ServicesData | null>(initial ?? null);
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(!initial);
 
   useEffect(() => {
     let cancelled = false;
-    fetchServicesAndCategories()
-      .then(({ categories: fresh }) => {
-        if (cancelled) return;
-        setCategories(fresh);
-        setActiveId((prev) => {
-          const stillExists = prev && fresh.find((c) => c.categoryId === prev);
-          return stillExists ? prev : (fresh[0]?.categoryId ?? null);
-        });
+    fetchCatalog()
+      .then((fresh) => {
+        if (!cancelled) setData(fresh);
       })
       .catch((e: unknown) => {
         if (cancelled) return;
@@ -45,20 +39,45 @@ export default function ServicesList({ initial }: Props) {
     };
   }, [initial]);
 
-  const activeCategory = useMemo(
-    () => categories?.find((c) => c.categoryId === activeId) ?? null,
-    [categories, activeId],
-  );
+  const locations = data?.locations ?? [];
+  const activeLocation =
+    locations.find((l) => locationKey(l) === selectedLocation) ??
+    locations[0] ??
+    null;
+  const categories = activeLocation?.categories ?? [];
+  const activeCategory =
+    categories.find((c) => c.categoryId === selectedCategory) ??
+    categories[0] ??
+    null;
 
   return (
     <div>
-      {categories && categories.length > 0 && (
+      {locations.length > 1 && (
+        <div className="flex flex-col items-center md:items-start gap-3 mb-8">
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+            {locations.map((l) => (
+              <button
+                key={locationKey(l)}
+                type="button"
+                className="btn-location"
+                aria-pressed={l === activeLocation}
+                onClick={() => setSelectedLocation(locationKey(l))}
+              >
+                {l.address?.label ?? "Studio"}
+              </button>
+            ))}
+          </div>
+          {activeLocation && <LocationNote location={activeLocation} />}
+        </div>
+      )}
+
+      {categories.length > 0 && (
         <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-10">
           {categories.map((c) => (
             <TabButton
               key={c.categoryId}
-              active={c.categoryId === activeId}
-              onClick={() => setActiveId(c.categoryId)}
+              active={c === activeCategory}
+              onClick={() => setSelectedCategory(c.categoryId)}
             >
               {c.name}
             </TabButton>
@@ -66,7 +85,7 @@ export default function ServicesList({ initial }: Props) {
         </div>
       )}
 
-      {loading && !categories && (
+      {loading && !data && (
         <ul className="space-y-6" aria-busy="true">
           {Array.from({ length: 4 }).map((_, i) => (
             <li key={i} className="h-12 bg-ink/5 animate-pulse rounded-sm" />
@@ -74,7 +93,7 @@ export default function ServicesList({ initial }: Props) {
         </ul>
       )}
 
-      {!loading && !categories && error && (
+      {!loading && !data && error && (
         <p className="text-sm text-ink-muted mb-4">
           Services are temporarily unavailable: {error}
         </p>
@@ -114,15 +133,28 @@ export default function ServicesList({ initial }: Props) {
               </button>
             </li>
           ))}
-          {activeCategory.services.length === 0 && (
-            <li className="py-6 text-sm text-ink-muted">
-              No services in this category yet.
-            </li>
-          )}
         </ul>
       )}
-
     </div>
+  );
+}
+
+function LocationNote({ location }: { location: LocationCatalog }) {
+  const address = location.address;
+  if (!address) return null;
+  if (address.kind === "in_home") {
+    const fee = address.surchargeCents;
+    return (
+      <p className="font-body text-sm text-ink-muted text-center md:text-left">
+        I come to you anywhere in the Naples area.
+        {fee ? ` A ${formatPrice(fee)} travel fee is added per visit.` : ""}
+      </p>
+    );
+  }
+  return (
+    <p className="font-body text-sm text-ink-muted text-center md:text-left">
+      {formatAddress(address)}
+    </p>
   );
 }
 
